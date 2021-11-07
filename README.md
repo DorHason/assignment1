@@ -9,4 +9,4 @@ Randomly selects a number of entries (according to what was sent in data.entries
 Goes over the database and finds the entries that were modified. Returns a human-readable  report that specifies how many entries were modified, and which ones (their ID’s). 
 
 To run the server install the requirements and run "python app.py", or build the container using "docker-compose up --build" from the terminal.
-Then, navigate to http://localhost:5000/initialize initialize the application.
+Then, navigate to http://localhost:5000/initialize to initialize the application.
