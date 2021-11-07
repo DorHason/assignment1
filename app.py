@@ -42,6 +42,9 @@ def modify():
     # modify rows randomly and save to DB
     entries = json_data['entries']
     messages = get_random_messages(entries)
+    if not messages:
+        return json.dumps('No unmodified rows were found. Either all rows were already modified or you did not call '
+                          'initialize first'), 200
     for message in messages:
         message.is_modified = True
     try:
