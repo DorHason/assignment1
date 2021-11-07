@@ -2,6 +2,7 @@ import datetime
 import json
 
 from flask import request
+from sqlalchemy import exc
 
 from helpers import validate_payload
 from create_app import create_app
@@ -14,15 +15,20 @@ app = create_app()
 # removes whatever is currently in the DB, and stores 5000 duplicates of the provided data entry example
 @app.route('/initialize', methods=['GET'])
 def initialize():
-    # restart table
-    db.session.query(Message).delete()
-    db.session.commit()
-    # create 5000 entries and save to DB
-    messages = [Message(status=i, data="data example", timestamp=int(datetime.datetime.utcnow().timestamp()))
-                for i in range(5000)]
-    db.session.add_all(messages)
-    db.session.commit()
-    return json.dumps("Initialized"), 200
+    try:
+        # clean table content
+        db.session.query(Message).delete()
+        db.session.commit()
+        # create 5000 entries and save to DB
+        messages = [Message(status=i, data='data example', timestamp=int(datetime.datetime.utcnow().timestamp()))
+                    for i in range(5000)]
+        db.session.add_all(messages)
+        db.session.commit()
+    except exc.SQLAlchemyError as e:
+        print(e)  # or log to the appropriate channel
+        db.session.rollback()
+        return json.dumps('Could restart table'), 404
+    return json.dumps('Initialized'), 200
 
 
 # randomly selects a number of entries (according to what was sent in data.entries),
@@ -32,14 +38,19 @@ def modify():
     json_data = request.get_json()
     # validate payload
     if not validate_payload(json_data):
-        return json.dumps("Payload is not valid"), 404
+        return json.dumps('Payload is not valid'), 404
     # modify rows randomly and save to DB
     entries = json_data['entries']
     messages = get_random_messages(entries)
     for message in messages:
         message.is_modified = True
-    db.session.commit()
-    return json.dumps('modified'), 200
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError as e:
+        print(e)  # or log to the appropriate channel
+        db.session.rollback()
+        return json.dumps('Could not modify rows'), 404
+    return json.dumps('Modified rows successfully'), 200
 
 
 # goes over the database and finds the entries that were modified
