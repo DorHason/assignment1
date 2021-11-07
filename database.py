@@ -8,4 +8,4 @@ def get_random_messages(entries):
 
 
 def get_modified_messages():
-    return db.session.query(Message).filter(Message.is_modified).with_entities(Message.id).all()
+    return db.session.query(Message).filter(Message.is_modified).with_entities(Message._id).all()
