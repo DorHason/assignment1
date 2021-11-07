@@ -9,5 +9,5 @@ Randomly selects a number of entries (according to what was sent in data.entries
 Goes over the database and finds the entries that were modified. Returns a human-readable  report that specifies how many entries were modified, and which ones (their ID’s).
 
 The program was built with Python 3.7, Flask and SQLite.
-To run the server install the requirements and run "python app.py", or build the container and run it using "docker-compose up --build" from the terminal.
+To run the server, install the requirements and run "python app.py", or build the container and run it using "docker-compose up --build".
 Then, navigate to http://localhost:5000/initialize to initialize the application.
