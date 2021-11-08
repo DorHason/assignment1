@@ -53,7 +53,7 @@ def modify():
         print(e)  # or log to the appropriate channel
         db.session.rollback()
         return json.dumps('Could not modify rows'), 404
-    return json.dumps('Modified rows successfully'), 200
+    return json.dumps(f'{len(messages)} rows were modified successfully'), 200
 
 
 # goes over the database and finds the entries that were modified
